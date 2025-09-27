@@ -1,0 +1,6 @@
+playwright
+pytest
+pytest-playwright
+allure-pytest
+flake8
+pytest-order
