@@ -38,7 +38,9 @@ class MainPage(BasePage):
 
         pizza_card.hover()
 
-        self.page.wait_for_selector(self.ADD_TO_CART_BUTTON, state="visible", timeout=10000)
+        self.page.wait_for_selector(
+            self.ADD_TO_CART_BUTTON, state="visible", timeout=10000
+        )
 
         add_button = pizza_card.locator(self.ADD_TO_CART_BUTTON)
         add_button.click()
@@ -53,9 +55,10 @@ class MainPage(BasePage):
 
         if cart_text:
             import re
-            amount_match = re.search(r'[\d,]+\.?[\d]*(?=₽)|[\d,]+', cart_text)
+
+            amount_match = re.search(r"[\d,]+\.?[\d]*(?=₽)|[\d,]+", cart_text)
             if amount_match:
-                amount_str = amount_match.group().replace(',', '.').replace(' ', '')
+                amount_str = amount_match.group().replace(",", ".").replace(" ", "")
                 try:
                     amount = float(amount_str)
                     self.logger.info(f"Текущая сумма в корзине: {amount}₽")
@@ -66,11 +69,10 @@ class MainPage(BasePage):
         self.logger.info("Корзина пуста или не удалось распарсить сумму")
         return 0.0
 
-
-    def navigate_slider_and_verify(self, direction='next'):
+    def navigate_slider_and_verify(self, direction="next"):
         initial_slide = self.page.locator(".slick-slide.slick-active").first
 
-        if direction == 'next':
+        if direction == "next":
             self.click_next_slider()
         else:
             self.click_prev_slider()
@@ -84,7 +86,9 @@ class MainPage(BasePage):
         prod_section = self.page.locator(".prod1-slider").first
         prod_section.hover()
 
-        self.page.wait_for_selector(self.SLIDER_NEXT_BUTTON, state="visible", timeout=10000)
+        self.page.wait_for_selector(
+            self.SLIDER_NEXT_BUTTON, state="visible", timeout=10000
+        )
 
         self.click(self.SLIDER_NEXT_BUTTON, "Стрелка 'Вправо' слайдера")
 
@@ -92,17 +96,22 @@ class MainPage(BasePage):
         prod_section = self.page.locator(".prod1-slider").first
         prod_section.hover()
 
-        self.page.wait_for_selector(self.SLIDER_PREV_BUTTON, state="visible", timeout=10000)
+        self.page.wait_for_selector(
+            self.SLIDER_PREV_BUTTON, state="visible", timeout=10000
+        )
 
         self.click(self.SLIDER_PREV_BUTTON, "Стрелка 'Влево' слайдера")
 
     def _hover_with_js(self, element_locator):
-        self.page.evaluate("""
+        self.page.evaluate(
+            """
             (element) => {
                 element.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
                 element.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
             }
-        """, element_locator.element_handle())
+        """,
+            element_locator.element_handle(),
+        )
         self.page.wait_for_timeout(500)
 
     def click_first_pizza_image(self):
@@ -113,8 +122,13 @@ class MainPage(BasePage):
         prod_section.hover()
 
         for i in range(slide_index):
-            self.page.wait_for_selector(self.SLIDER_NEXT_BUTTON, state="visible", timeout=5000)
-            self.click(self.SLIDER_NEXT_BUTTON, f"Стрелка 'Вправо' для перехода к слайду {i + 1}")
+            self.page.wait_for_selector(
+                self.SLIDER_NEXT_BUTTON, state="visible", timeout=5000
+            )
+            self.click(
+                self.SLIDER_NEXT_BUTTON,
+                f"Стрелка 'Вправо' для перехода к слайду {i + 1}",
+            )
             self.page.wait_for_timeout(500)  # Ждем анимацию
 
     def add_pizza_from_current_slide(self):

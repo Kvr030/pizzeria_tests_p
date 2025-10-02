@@ -18,8 +18,7 @@ def browser():
 def context(browser):
     logger.info(" Создаю контекст браузера")
     context = browser.new_context(
-        viewport=None,
-        base_url="https://pizzeria.skillbox.cc"
+        viewport=None, base_url="https://pizzeria.skillbox.cc"
     )
 
     context.set_default_timeout(30000)
@@ -39,36 +38,42 @@ def page(context):
 @pytest.fixture(scope="session")
 def main_page(page):
     from pages.main_page import MainPage
+
     return MainPage(page)
 
 
 @pytest.fixture(scope="session")
 def product_page(page):
     from pages.product_page import ProductPage
+
     return ProductPage(page)
 
 
 @pytest.fixture(scope="session")
 def cart_page(page):
     from pages.cart_page import CartPage
+
     return CartPage(page)
 
 
 @pytest.fixture(scope="session")
 def menu_page(page):
     from pages.menu_page import MenuPage
+
     return MenuPage(page)
 
 
 @pytest.fixture(scope="session")
 def checkout_page(page):
     from pages.checkout_page import CheckoutPage
+
     return CheckoutPage(page)
 
 
 @pytest.fixture(scope="session")
 def account_page(page):
     from pages.account_page import AccountPage
+
     return AccountPage(page)
 
 
@@ -81,4 +86,5 @@ def cleanup_test_data():
 @pytest.fixture(scope="session")
 def bonus_page(page):
     from pages.bonus_page import BonusPage
+
     return BonusPage(page)

@@ -10,18 +10,18 @@ def run_tests_sequence():
         {
             "name": "Основной флоу",
             "file": "tests/test_main_flow.py",
-            "description": "15 основных тест-кейсов пользовательского флоу"
+            "description": "15 основных тест-кейсов пользовательского флоу",
         },
         {
             "name": "Промокоды",
             "file": "tests/test_promocodes.py",
-            "description": "4 сценария работы с промокодами"
+            "description": "4 сценария работы с промокодами",
         },
         {
             "name": "Бонусная программа",
             "file": "tests/test_bonus_flow.py",
-            "description": "Регистрация в бонусной программе"
-        }
+            "description": "Регистрация в бонусной программе",
+        },
     ]
 
     logger.info(" Начало выполнения всех тестовых сценариев")
@@ -42,7 +42,7 @@ def run_tests_sequence():
                 suite["file"],
                 "-v",
                 "--alluredir=allure-results",
-                "--tb=short"
+                "--tb=short",
             ]
 
             exit_code = pytest.main()
@@ -52,7 +52,9 @@ def run_tests_sequence():
             if exit_code == 0:
                 logger.info(f" Тесты {suite['name']} успешно завершены")
             else:
-                logger.error(f" Тесты {suite['name']} завершились с ошибками (код: {exit_code})")
+                logger.error(
+                    f" Тесты {suite['name']} завершились с ошибками (код: {exit_code})"
+                )
 
         except Exception as e:
             logger.error(f" Ошибка при запуске тестов {suite['name']}: {e}")

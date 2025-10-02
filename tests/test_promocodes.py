@@ -5,7 +5,9 @@ from utilities.logger import logger
 
 
 @allure.title("Блок 2 - Сценарий 1: Успешное применение промокода GIVEMEHALYAVA")
-def test_valid_promocode_applies_10_discount(page, menu_page, cart_page, checkout_page, account_page):
+def test_valid_promocode_applies_10_discount(
+    page, menu_page, cart_page, checkout_page, account_page
+):
     logger.info(" Начало Сценария 1: Проверка валидного промокода")
 
     with allure.step("1. Авторизоваться зарегистрированным пользователем"):
@@ -81,7 +83,7 @@ def test_valid_promocode_applies_10_discount(page, menu_page, cart_page, checkou
             page.is_visible(".woocommerce-message:has-text('GIVEMEHALYAVA')"),
             page.is_visible(".woocommerce-message:has-text('успешно')"),
             page.is_visible(".cart-discount"),
-            page.is_visible(".coupon-applied")
+            page.is_visible(".coupon-applied"),
         ]
 
         assert any(success_indicators), "Промокод не применился - нет признаков успеха"
@@ -100,13 +102,17 @@ def test_valid_promocode_applies_10_discount(page, menu_page, cart_page, checkou
         )
 
         actual_discount = ((total_before - total_after) / total_before) * 100
-        logger.info(f" Скидка {actual_discount:.1f}% применена корректно. Итоговая сумма: {total_after}₽")
+        logger.info(
+            f" Скидка {actual_discount:.1f}% применена корректно. Итоговая сумма: {total_after}₽"
+        )
 
     logger.info(" Сценарий 1 завершен успешно! Промокод работает корректно.")
 
 
 @allure.title("Блок 2 - Сценарий 2: Невалидный промокод DC120 не применяется")
-def test_invalid_promocode_does_not_apply_discount(page, menu_page, cart_page, checkout_page):
+def test_invalid_promocode_does_not_apply_discount(
+    page, menu_page, cart_page, checkout_page
+):
     logger.info(" Начало Сценария 2: Проверка невалидного промокода DC120")
 
     with allure.step("2. Подготовить чистую корзину"):
@@ -119,7 +125,9 @@ def test_invalid_promocode_does_not_apply_discount(page, menu_page, cart_page, c
                 cart_page.remove_product(0)
                 page.wait_for_timeout(1000)
 
-        assert cart_page.is_cart_empty(), "Корзина должна быть пустой перед началом теста"
+        assert (
+            cart_page.is_cart_empty()
+        ), "Корзина должна быть пустой перед началом теста"
 
     with allure.step("3. Добавить новый товар в корзину"):
         menu_page.open()
@@ -149,7 +157,9 @@ def test_invalid_promocode_does_not_apply_discount(page, menu_page, cart_page, c
         page.wait_for_timeout(3000)
 
     with allure.step("7. Проверить, что промокод НЕ применился"):
-        assert checkout_page.is_promocode_error("DC120"), "Должна быть ошибка применения промокода"
+        assert checkout_page.is_promocode_error(
+            "DC120"
+        ), "Должна быть ошибка применения промокода"
         logger.info(" Промокод DC120 правильно не применился - ошибка отображена")
 
         success_applied = checkout_page.is_promocode_applied("DC120")
@@ -160,9 +170,9 @@ def test_invalid_promocode_does_not_apply_discount(page, menu_page, cart_page, c
         total_after = checkout_page.get_cart_total_amount()
         logger.info(f" Итоговая сумма после попытки применения: {total_after}₽")
 
-        assert abs(total_after - total_before) < 0.01, (
-            f"Сумма не должна изменяться. Было: {total_before}₽, Стало: {total_after}₽"
-        )
+        assert (
+            abs(total_after - total_before) < 0.01
+        ), f"Сумма не должна изменяться. Было: {total_before}₽, Стало: {total_after}₽"
         logger.info(" Сумма заказа не изменилась - промокод не сработал")
 
     with allure.step("9. Проверить отсутствие скидки в деталях заказа"):
@@ -237,7 +247,7 @@ def test_promocode_server_error_handling(page, menu_page, cart_page, checkout_pa
             "Сообщение об ошибке": ".woocommerce-error",
             "Сообщение об успехе": ".woocommerce-message",
             "Блок скидки": ".cart-discount",
-            "Примененный купон": ".coupon-applied"
+            "Примененный купон": ".coupon-applied",
         }
 
         for name, selector in elements_to_check.items():
@@ -256,7 +266,9 @@ def test_promocode_server_error_handling(page, menu_page, cart_page, checkout_pa
         if amount_unchanged:
             logger.info(" Сумма не изменилась - промокод не сработал")
         else:
-            logger.error(f" Сумма ИЗМЕНИЛАСЬ! Было: {total_before}₽, Стало: {total_after}₽")
+            logger.error(
+                f" Сумма ИЗМЕНИЛАСЬ! Было: {total_before}₽, Стало: {total_after}₽"
+            )
             page.screenshot(path="screenshots/server_error_bug.png")
             logger.info(" Скриншот сохранен: screenshots/server_error_bug.png")
 
@@ -267,18 +279,22 @@ def test_promocode_server_error_handling(page, menu_page, cart_page, checkout_pa
             success_applied = checkout_page.is_promocode_applied("GIVEMEHALYAVA")
 
             if success_applied and not amount_unchanged:
-                logger.error(" ВОЗМОЖНЫЙ БАГ: Промокод применился несмотря на ошибку сервера!")
+                logger.error(
+                    " ВОЗМОЖНЫЙ БАГ: Промокод применился несмотря на ошибку сервера!"
+                )
             else:
-                logger.warning("️ Неоднозначный результат - требуется дополнительный анализ")
+                logger.warning(
+                    "️ Неоднозначный результат - требуется дополнительный анализ"
+                )
 
     with allure.step("10. Отключить перехват запросов"):
         page.unroute("**/wp-admin/admin-ajax.php*")
         page.unroute("**/admin-ajax.php*")
         page.unroute("**/*coupon*")
 
-    assert abs(total_after - total_before) < 0.01, (
-        f"БАГ: Промокод применился при ошибке сервера! Было: {total_before}₽, Стало: {total_after}₽"
-    )
+    assert (
+        abs(total_after - total_before) < 0.01
+    ), f"БАГ: Промокод применился при ошибке сервера! Было: {total_before}₽, Стало: {total_after}₽"
 
 
 @allure.title("Блок 2 - Сценарий 4: Проверка однократности применения промокода")
@@ -305,7 +321,10 @@ def test_promocode_one_time_use_only(page, menu_page, checkout_page):
 
         import random
         import string
-        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+
+        random_suffix = "".join(
+            random.choices(string.ascii_lowercase + string.digits, k=6)
+        )
         username = f"user_{random_suffix}"[:19]
         email = f"t{random_suffix}@ex.com"[:19]
         password = "Pass123!"[:19]
@@ -352,7 +371,9 @@ def test_promocode_one_time_use_only(page, menu_page, checkout_page):
         assert checkout_page.is_order_received(), "Первый заказ не оформлен"
         first_order_number = checkout_page.get_order_number()
         first_order_final_amount = checkout_page.get_order_total()
-        logger.info(f" Первый заказ оформлен! Номер: {first_order_number}, Сумма: {first_order_final_amount}")
+        logger.info(
+            f" Первый заказ оформлен! Номер: {first_order_number}, Сумма: {first_order_final_amount}"
+        )
 
     with allure.step("3. Второй заказ с попыткой применения того же промокода"):
         menu_page.open()
@@ -388,7 +409,9 @@ def test_promocode_one_time_use_only(page, menu_page, checkout_page):
         def parse_amount(amount_text):
             if isinstance(amount_text, (int, float)):
                 return float(amount_text)
-            cleaned = str(amount_text).replace('₽', '').replace(' ', '').replace(',', '.')
+            cleaned = (
+                str(amount_text).replace("₽", "").replace(" ", "").replace(",", ".")
+            )
             return float(cleaned)
 
         original_amount = parse_amount(second_order_original_amount)
@@ -403,8 +426,10 @@ def test_promocode_one_time_use_only(page, menu_page, checkout_page):
 
         if amount_difference > 1:
             unauthorized_discount = original_amount - final_amount
-            pytest.fail(f"БАГ: Промокод применился повторно! "
-                        f"Второй заказ получил скидку {unauthorized_discount:.2f}₽")
+            pytest.fail(
+                f"БАГ: Промокод применился повторно! "
+                f"Второй заказ получил скидку {unauthorized_discount:.2f}₽"
+            )
         else:
             logger.info(" Промокод не применился повторно - тест пройден")
 

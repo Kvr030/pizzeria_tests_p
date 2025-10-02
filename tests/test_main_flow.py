@@ -15,7 +15,9 @@ def test_main_page_loads_successfully(page, main_page):
         main_page.open()
 
     with allure.step("Проверить видимость слайдера с товарами"):
-        assert main_page.is_slider_visible(), "Слайдер с товарами не отображается на странице!"
+        assert (
+            main_page.is_slider_visible()
+        ), "Слайдер с товарами не отображается на странице!"
 
 
 @allure.title("TC-02: Добавление товара в корзину с главной страницы")
@@ -36,8 +38,9 @@ def test_add_pizza_to_cart_from_main_page(page, main_page):
         new_amount = main_page.get_cart_amount()
         main_page.logger.info(f"Новая сумма: {new_amount}₽")
 
-        assert new_amount > initial_amount, (f"Сумма не увеличилась! "
-                                             f"Было: {initial_amount}₽, Стало: {new_amount}₽")
+        assert new_amount > initial_amount, (
+            f"Сумма не увеличилась! " f"Было: {initial_amount}₽, Стало: {new_amount}₽"
+        )
 
 
 @allure.title("TC-03: Навигация по слайдеру на главной странице")
@@ -76,9 +79,9 @@ def test_add_pizza_after_slider_navigation(page, main_page):
         new_amount = main_page.get_cart_amount()
         main_page.logger.info(f"Сумма в корзине после добавления: {new_amount}₽")
 
-        assert new_amount > initial_amount, (
-            f"Сумма в корзине не увеличилась! Было: {initial_amount}₽, Стало: {new_amount}₽"
-        )
+        assert (
+            new_amount > initial_amount
+        ), f"Сумма в корзине не увеличилась! Было: {initial_amount}₽, Стало: {new_amount}₽"
 
 
 @allure.title("TC-05: Переход к странице деталей товара 'Ветчина и грибы'")
@@ -100,7 +103,9 @@ def test_navigate_to_product_details(page, main_page, product_page):
         logger.info(f"Успешно перешли на страницу товара: {product_title}")
 
     with allure.step("Проверить что URL соответствует странице товара"):
-        assert "/product/" in page.url, f"URL не соответствует странице товара: {page.url}"
+        assert (
+            "/product/" in page.url
+        ), f"URL не соответствует странице товара: {page.url}"
 
 
 @allure.title("TC-06: Выбор опции товара и добавление в корзину")
@@ -110,7 +115,9 @@ def test_select_option_and_add_to_cart(page, product_page):
 
     with allure.step("Проверить что находимся на странице товара"):
         if "/product/" not in page.url:
-            pytest.fail("Тест TC-06 должен выполняться после TC-05 (страница товара должна быть открыта)")
+            pytest.fail(
+                "Тест TC-06 должен выполняться после TC-05 (страница товара должна быть открыта)"
+            )
 
     with allure.step("Запомнить выбранный тип борта по умолчанию"):
         initial_board = product_page.get_selected_board_option()
@@ -120,7 +127,9 @@ def test_select_option_and_add_to_cart(page, product_page):
         product_page.select_board_option("cheese")
 
         selected_board = product_page.get_selected_board_option()
-        assert selected_board == "cheese", f"Опция не выбрана. Текущая: {selected_board}"
+        assert (
+            selected_board == "cheese"
+        ), f"Опция не выбрана. Текущая: {selected_board}"
 
     with allure.step("Нажать кнопку 'В корзину' на странице товара"):
         product_page.add_to_cart()
@@ -148,8 +157,12 @@ def test_cart_contents_display(page, main_page, cart_page):
         main_page.go_to_cart()
 
     with allure.step("Проверить что открылась страница корзины"):
-        assert "/cart/" in page.url, f"Не открылась страница корзины. Текущий URL: {page.url}"
-        assert cart_page.is_cart_empty() is False, "Корзина пуста, но должна содержать товары"
+        assert (
+            "/cart/" in page.url
+        ), f"Не открылась страница корзины. Текущий URL: {page.url}"
+        assert (
+            cart_page.is_cart_empty() is False
+        ), "Корзина пуста, но должна содержать товары"
 
     with allure.step("Проверить что в корзине 3 различных товара"):
         items_count = cart_page.get_cart_items_count()
@@ -159,16 +172,24 @@ def test_cart_contents_display(page, main_page, cart_page):
     with allure.step("Проверить названия товаров в корзине"):
         product_names = cart_page.get_product_names()
         logger.info(f"Товары в корзине: {product_names}")
-        assert len(product_names) == 3, f"Ожидалось 3 названия товаров, но найдено: {len(product_names)}"
+        assert (
+            len(product_names) == 3
+        ), f"Ожидалось 3 названия товаров, но найдено: {len(product_names)}"
 
         unique_names = set(product_names)
-        assert len(unique_names) == 3, f"Товары не уникальны. Найдены дубликаты: {product_names}"
+        assert (
+            len(unique_names) == 3
+        ), f"Товары не уникальны. Найдены дубликаты: {product_names}"
 
     with allure.step("Проверить общую стоимость заказа"):
         total_amount = cart_page.get_cart_total_amount()
         logger.info(f"Общая сумма заказа: {total_amount}₽")
-        assert total_amount > 0, f"Общая сумма должна быть больше 0, но равна: {total_amount}₽"
-        assert total_amount >= 1000, f"Сумма кажется слишком маленькой для 3 товаров: {total_amount}₽"
+        assert (
+            total_amount > 0
+        ), f"Общая сумма должна быть больше 0, но равна: {total_amount}₽"
+        assert (
+            total_amount >= 1000
+        ), f"Сумма кажется слишком маленькой для 3 товаров: {total_amount}₽"
 
 
 @allure.title("TC-08: Изменение количества товара в корзине")
@@ -187,7 +208,8 @@ def test_update_cart_quantity(page, cart_page):
 
         logger.info(
             f"Исходные данные: общая сумма={initial_total}₽, "
-            f"количество 1го товара={initial_quantity}, сумма за 1й товар={initial_subtotal}₽")
+            f"количество 1го товара={initial_quantity}, сумма за 1й товар={initial_subtotal}₽"
+        )
 
     with allure.step("Изменить количество первого товара на 2"):
         cart_page.update_product_quantity(0, 2)
@@ -200,7 +222,9 @@ def test_update_cart_quantity(page, cart_page):
 
     with allure.step("Проверить что количество товара изменилось"):
         new_quantity = cart_page.get_product_quantity(0)
-        assert new_quantity == 2, f"Количество не изменилось. Ожидалось: 2, Фактически: {new_quantity}"
+        assert (
+            new_quantity == 2
+        ), f"Количество не изменилось. Ожидалось: 2, Фактически: {new_quantity}"
         logger.info(f"Количество товара успешно изменено на: {new_quantity}")
 
     with allure.step("Проверить что сумма за позицию пересчиталась"):
@@ -216,9 +240,9 @@ def test_update_cart_quantity(page, cart_page):
     with allure.step("Проверить что общая сумма заказа пересчиталась"):
         new_total = cart_page.get_cart_total_amount()
 
-        assert new_total > initial_total, (
-            f"Общая сумма не увеличилась. Было: {initial_total}₽, Стало: {new_total}₽"
-        )
+        assert (
+            new_total > initial_total
+        ), f"Общая сумма не увеличилась. Было: {initial_total}₽, Стало: {new_total}₽"
         logger.info(f"Общая сумма заказа пересчитана: {new_total}₽")
 
 
@@ -236,7 +260,9 @@ def test_remove_product_from_cart(page, cart_page):
         initial_total = cart_page.get_cart_total_amount()
         initial_product_names = cart_page.get_product_names()
 
-        logger.info(f"Исходные данные: {initial_items_count} товаров, общая сумма={initial_total}₽")
+        logger.info(
+            f"Исходные данные: {initial_items_count} товаров, общая сумма={initial_total}₽"
+        )
         logger.info(f"Товары в корзине: {initial_product_names}")
 
     with allure.step("Удалить первый товар из корзины"):
@@ -257,9 +283,9 @@ def test_remove_product_from_cart(page, cart_page):
     with allure.step("Проверить что общая сумма уменьшилась"):
         new_total = cart_page.get_cart_total_amount()
 
-        assert new_total < initial_total, (
-            f"Общая сумма не уменьшилась после удаления. Было: {initial_total}₽, Стало: {new_total}₽"
-        )
+        assert (
+            new_total < initial_total
+        ), f"Общая сумма не уменьшилась после удаления. Было: {initial_total}₽, Стало: {new_total}₽"
         logger.info(f"Общая сумма уменьшилась: {new_total}₽")
 
     with allure.step("Проверить список оставшихся товаров"):
@@ -268,13 +294,15 @@ def test_remove_product_from_cart(page, cart_page):
 
         if initial_product_names:
             removed_product = initial_product_names[0]
-            assert removed_product not in remaining_products, (
-                f"Удаленный товар '{removed_product}' все еще в корзине"
-            )
+            assert (
+                removed_product not in remaining_products
+            ), f"Удаленный товар '{removed_product}' все еще в корзине"
             logger.info(f"Товар '{removed_product}' успешно удален")
 
     with allure.step("Проверить что корзина не пуста"):
-        assert not cart_page.is_cart_empty(), "Корзина пуста, но должна содержать оставшиеся товары"
+        assert (
+            not cart_page.is_cart_empty()
+        ), "Корзина пуста, но должна содержать оставшиеся товары"
         logger.info("В корзине остались другие товары")
 
 
@@ -303,9 +331,9 @@ def test_filter_products_by_category_and_price(page, menu_page):
         logger.info(f"Отображается товаров: {products_count}")
 
     with allure.step("Проверить что цены всех товаров не превышают 140 рублей"):
-        assert menu_page.are_all_prices_below_max(140), (
-            "Найдены товары с ценой выше 140 рублей"
-        )
+        assert menu_page.are_all_prices_below_max(
+            140
+        ), "Найдены товары с ценой выше 140 рублей"
 
         prices = menu_page.get_product_prices()
         titles = menu_page.get_product_titles()
@@ -343,15 +371,19 @@ def test_add_product_from_filtered_catalog(page, menu_page, main_page):
         new_amount = main_page.get_cart_amount()
         logger.info(f"Сумма в корзине после добавления: {new_amount}₽")
 
-        assert new_amount > initial_amount, (
-            f"Сумма в корзине не увеличилась. Было: {initial_amount}₽, Стало: {new_amount}₽"
-        )
+        assert (
+            new_amount > initial_amount
+        ), f"Сумма в корзине не увеличилась. Было: {initial_amount}₽, Стало: {new_amount}₽"
 
         price_difference = new_amount - initial_amount
-        logger.info(f"Товар успешно добавлен. Сумма увеличилась на: {price_difference}₽")
+        logger.info(
+            f"Товар успешно добавлен. Сумма увеличилась на: {price_difference}₽"
+        )
 
 
-@allure.title("TC-12: Реакция системы на попытку оформления заказа неавторизованным пользователем")
+@allure.title(
+    "TC-12: Реакция системы на попытку оформления заказа неавторизованным пользователем"
+)
 @pytest.mark.order(12)
 def test_guest_checkout_redirects_to_login(page, cart_page):
     logger.info("ТЕСТ 12: Начало выполнения")
@@ -362,7 +394,9 @@ def test_guest_checkout_redirects_to_login(page, cart_page):
         page.wait_for_timeout(3000)
 
     with allure.step("Проверить что отображается блок с предложением авторизации"):
-        woo_commerce_info = page.locator("div.woocommerce-info:has-text('Авторизуйтесь')")
+        woo_commerce_info = page.locator(
+            "div.woocommerce-info:has-text('Авторизуйтесь')"
+        )
         assert woo_commerce_info.is_visible(), "Информационный блок не отображается"
 
         info_text = woo_commerce_info.text_content()
@@ -373,16 +407,22 @@ def test_guest_checkout_redirects_to_login(page, cart_page):
         assert login_link.is_visible(), "Ссылка 'Авторизуйтесь' не отображается"
 
         link_text = login_link.text_content()
-        assert "авторизуйтесь" in link_text.lower(), f"Текст ссылки не соответствует: {link_text}"
+        assert (
+            "авторизуйтесь" in link_text.lower()
+        ), f"Текст ссылки не соответствует: {link_text}"
         logger.info(f"Ссылка 'Авторизуйтесь' найдена: {link_text}")
 
     with allure.step("Проверить что форма логина изначально скрыта"):
         login_form = page.locator("form.woocommerce-form-login")
-        assert not login_form.is_visible(), "Форма логина не должна отображаться до клика"
+        assert (
+            not login_form.is_visible()
+        ), "Форма логина не должна отображаться до клика"
         logger.info("Форма логина скрыта - корректное поведение")
 
     with allure.step("Проверить URL страницы"):
-        assert "/checkout/" in page.url, f"URL не соответствует странице оформления заказа: {page.url}"
+        assert (
+            "/checkout/" in page.url
+        ), f"URL не соответствует странице оформления заказа: {page.url}"
         logger.info(f"Успешно перешли на страницу оформления заказа: {page.url}")
 
 
@@ -421,8 +461,10 @@ def test_successful_user_registration(page, account_page):
         assert user_data["username"] == username, "Username не совпадает"
         assert user_data["email"] == email, "Email не совпадает"
 
-        logger.info(f" Данные сохранены: {user_data['username']}, {user_data['email']},"
-                    f" пароль: {user_data['password']}")
+        logger.info(
+            f" Данные сохранены: {user_data['username']}, {user_data['email']},"
+            f" пароль: {user_data['password']}"
+        )
 
 
 @allure.title("TC-14: Доступ к форме оформления заказа авторизованным пользователем")
@@ -441,16 +483,24 @@ def test_authorized_user_checkout_access(page, cart_page):
         page.wait_for_timeout(3000)
 
     with allure.step("Проверить что открылась форма оформления заказа"):
-        assert "/checkout/" in page.url, f"Не перешли на страницу оформления. URL: {page.url}"
+        assert (
+            "/checkout/" in page.url
+        ), f"Не перешли на страницу оформления. URL: {page.url}"
         logger.info("Успешно перешли на страницу оформления заказа")
 
-        form_exists = page.is_visible("form.checkout") or page.is_visible("#customer_details")
+        form_exists = page.is_visible("form.checkout") or page.is_visible(
+            "#customer_details"
+        )
         assert form_exists, "Форма оформления заказа не найдена"
         logger.info("Форма оформления заказа отображается")
 
-        login_suggestion = page.locator("div.woocommerce-info:has-text('Авторизуйтесь')")
+        login_suggestion = page.locator(
+            "div.woocommerce-info:has-text('Авторизуйтесь')"
+        )
         if login_suggestion.is_visible():
-            pytest.fail("Система предлагает авторизоваться, но пользователь уже авторизован")
+            pytest.fail(
+                "Система предлагает авторизоваться, но пользователь уже авторизован"
+            )
 
         logger.info(" Авторизованный пользователь имеет доступ к оформлению заказа")
 
@@ -484,11 +534,15 @@ def test_create_and_confirm_order(page, checkout_page):
         initial_url = page.url
         checkout_page.place_order()
 
-        assert page.url != initial_url, "Не произошло перехода после подтверждения заказа"
+        assert (
+            page.url != initial_url
+        ), "Не произошло перехода после подтверждения заказа"
         logger.info(" Заказ подтвержден")
 
     with allure.step("Проверить страницу подтверждения заказа"):
-        assert checkout_page.is_order_received(), "Не отображается страница подтверждения заказа"
+        assert (
+            checkout_page.is_order_received()
+        ), "Не отображается страница подтверждения заказа"
 
         order_number = checkout_page.get_order_number()
         order_total = checkout_page.get_order_total()

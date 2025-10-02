@@ -24,12 +24,21 @@ class BonusPage(BasePage):
         self.logger.info(" Перешли на страницу бонусной программы")
 
     def generate_random_name(self):
-        names = ["Алексей", "Мария", "Иван", "Елена", "Дмитрий", "Ольга", "Сергей", "Анна"]
+        names = [
+            "Алексей",
+            "Мария",
+            "Иван",
+            "Елена",
+            "Дмитрий",
+            "Ольга",
+            "Сергей",
+            "Анна",
+        ]
         return random.choice(names)
 
     def generate_random_phone(self):
-        first_digit = random.choice(['8', '7'])
-        rest_numbers = ''.join(random.choices(string.digits, k=10))
+        first_digit = random.choice(["8", "7"])
+        rest_numbers = "".join(random.choices(string.digits, k=10))
         phone = f"{first_digit}{rest_numbers}"
         return phone
 

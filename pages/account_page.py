@@ -32,7 +32,9 @@ class AccountPage(BasePage):
         self.page.wait_for_timeout(2000)
 
     def generate_random_credentials(self):
-        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+        random_suffix = "".join(
+            random.choices(string.ascii_lowercase + string.digits, k=6)
+        )
 
         username = f"user_{random_suffix}"[:19]
         email = f"t{random_suffix}@ex.com"[:19]
@@ -40,7 +42,8 @@ class AccountPage(BasePage):
 
         self.logger.info(
             f"Сгенерированы данные: user='{username}' ({len(username)}),"
-            f" email='{email}' ({len(email)}), password='{password}' ({len(password)})")
+            f" email='{email}' ({len(email)}), password='{password}' ({len(password)})"
+        )
 
         return username, email, password
 
@@ -60,14 +63,10 @@ class AccountPage(BasePage):
 
         success_indicators = [
             "my-account" in self.page.url,
-
             self.page.is_visible(".woocommerce-MyAccount-content"),
-
             self.page.is_visible(".woocommerce-MyAccount-navigation"),
-
             self.page.is_visible("p:has-text('Привет')"),
-
-            not self.page.is_visible(".woocommerce-error")
+            not self.page.is_visible(".woocommerce-error"),
         ]
 
         current_url = self.page.url
@@ -77,8 +76,15 @@ class AccountPage(BasePage):
         self.logger.info(f"Заголовок страницы: {page_title}")
 
         visible_elements = []
-        selectors = [".woocommerce-MyAccount-content", ".woocommerce-MyAccount-navigation",
-                     ".woocommerce-error", ".woocommerce-message", "p", "h1", "h2"]
+        selectors = [
+            ".woocommerce-MyAccount-content",
+            ".woocommerce-MyAccount-navigation",
+            ".woocommerce-error",
+            ".woocommerce-message",
+            "p",
+            "h1",
+            "h2",
+        ]
 
         for selector in selectors:
             if self.page.is_visible(selector):
@@ -106,7 +112,9 @@ class AccountPage(BasePage):
 
     def logout(self):
         if "my-account" in self.page.url:
-            logout_link = self.page.locator(".woocommerce-MyAccount-navigation a[href*='customer-logout']")
+            logout_link = self.page.locator(
+                ".woocommerce-MyAccount-navigation a[href*='customer-logout']"
+            )
 
             if logout_link.is_visible():
                 logout_link.click()

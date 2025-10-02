@@ -16,7 +16,9 @@ class BasePage:
         self.page.click(locator)
 
     def fill(self, locator: str, text: str, element_name: str = "Поле ввода"):
-        self.logger.info(f"Ввожу текст '{text}' в '{element_name}' (локатор: {locator})")
+        self.logger.info(
+            f"Ввожу текст '{text}' в '{element_name}' (локатор: {locator})"
+        )
         self.page.fill(locator, text)
 
     def is_visible(self, locator: str, element_name: str = "Элемент") -> bool:

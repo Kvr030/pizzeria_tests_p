@@ -32,16 +32,20 @@ class CheckoutPage(BasePage):
         return self.is_visible(self.LOGIN_LINK, "Ссылка 'Авторизуйтесь'")
 
     def is_checkout_page_loaded(self) -> bool:
-        return (self.page.is_visible(self.CHECKOUT_FORM) or
-                self.page.is_visible("#customer_details") or
-                "/checkout/" in self.page.url)
+        return (
+            self.page.is_visible(self.CHECKOUT_FORM)
+            or self.page.is_visible("#customer_details")
+            or "/checkout/" in self.page.url
+        )
 
     def click_login_link(self):
         self.click(self.LOGIN_LINK, "Ссылка 'Авторизуйтесь'")
         self.page.wait_for_selector(self.LOGIN_FORM, state="visible", timeout=5000)
 
     def is_checkout_form_visible(self) -> bool:
-        return self.page.is_visible("form.checkout") or self.page.is_visible("#customer_details")
+        return self.page.is_visible("form.checkout") or self.page.is_visible(
+            "#customer_details"
+        )
 
     def get_prefilled_email(self) -> str:
         email_field = self.page.locator("#billing_email")
@@ -54,7 +58,7 @@ class CheckoutPage(BasePage):
             ".order-total .amount",
             ".cart_totals .amount:last-child",
             "tr.order-total .amount",
-            "td[data-title='Итого'] .amount"
+            "td[data-title='Итого'] .amount",
         ]
 
         for selector in total_selectors:
@@ -64,9 +68,10 @@ class CheckoutPage(BasePage):
                 self.logger.info(f"Найден текст суммы: '{total_text}'")
 
                 import re
-                amount_match = re.search(r'[\d,]+', total_text)
+
+                amount_match = re.search(r"[\d,]+", total_text)
                 if amount_match:
-                    amount = float(amount_match.group().replace(',', '.'))
+                    amount = float(amount_match.group().replace(",", "."))
                     self.logger.info(f"Общая сумма заказа: {amount}₽")
                     return amount
 
@@ -81,7 +86,7 @@ class CheckoutPage(BasePage):
             "#billing_city": "Москва",
             "#billing_state": "Москва",
             "#billing_postcode": "123456",
-            "#billing_phone": "+79991234567"
+            "#billing_phone": "+79991234567",
         }
 
         for selector, value in fields_to_fill.items():
@@ -94,6 +99,7 @@ class CheckoutPage(BasePage):
 
     def fill_delivery_form(self):
         from utilities.test_data import test_data
+
         user_data = test_data.get_registered_user()
 
         if not user_data:
@@ -101,14 +107,18 @@ class CheckoutPage(BasePage):
 
         self.fill_required_fields(user_data)
 
-        region_selectors = ["#billing_state", "select[name='billing_state']", "#billing_region"]
+        region_selectors = [
+            "#billing_state",
+            "select[name='billing_state']",
+            "#billing_region",
+        ]
         for selector in region_selectors:
             if self.page.is_visible(selector):
                 try:
                     self.page.select_option(selector, value="MOS")  # Москва
                     self.logger.info(" Выбран регион: Москва")
                     break
-                except Exception :
+                except Exception:
                     self.page.fill(selector, "Москва")
                     self.logger.info(" Введен регион: Москва")
                     break
@@ -116,13 +126,15 @@ class CheckoutPage(BasePage):
         self.logger.info(" Форма доставки полностью заполнена")
 
     def select_delivery_date_tomorrow(self):
-        tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime(
+            "%Y-%m-%d"
+        )
 
         date_selectors = [
             "#delivery_date",
             "input[name='delivery_date']",
             "input[type='date']",
-            ".delivery_date"
+            ".delivery_date",
         ]
 
         for selector in date_selectors:
@@ -132,7 +144,9 @@ class CheckoutPage(BasePage):
                 self.logger.info(f"✅ Выбрана дата доставки: {tomorrow}")
                 return
 
-        self.logger.warning(" Поле даты доставки не найдено, используем дату по умолчанию")
+        self.logger.warning(
+            " Поле даты доставки не найдено, используем дату по умолчанию"
+        )
 
     def select_cash_on_delivery(self):
         cash_radio = self.page.locator(self.PAYMENT_METHOD_CASH)
@@ -140,7 +154,9 @@ class CheckoutPage(BasePage):
             cash_radio.click()
             self.logger.info("Выбрана оплата при доставке")
         else:
-            payment_methods = self.page.locator(".payment_methods input, .wc_payment_methods input")
+            payment_methods = self.page.locator(
+                ".payment_methods input, .wc_payment_methods input"
+            )
             if payment_methods.count() > 0:
                 payment_methods.first.click()
                 self.logger.info("Выбран первый доступный способ оплаты")
@@ -162,16 +178,14 @@ class CheckoutPage(BasePage):
             "order-received" in self.page.url,
             "order-received" in self.page.url,
             "thank-you" in self.page.url,
-
             self.page.is_visible(".woocommerce-order-received"),
             self.page.is_visible(".order-received"),
             self.page.is_visible(".woocommerce-thankyou"),
             self.page.is_visible("h2:has-text('Заказ получен')"),
             self.page.is_visible(":has-text('Заказ подтвержден')"),
-
             self.page.is_visible(".order strong"),
             self.page.is_visible(".order-number"),
-            self.page.is_visible("li.order")
+            self.page.is_visible("li.order"),
         ]
 
         current_url = self.page.url
@@ -180,7 +194,12 @@ class CheckoutPage(BasePage):
         self.logger.info(f" Заголовок страницы: {page_title}")
 
         visible_elements = []
-        for indicator in [".woocommerce-order-received", ".order-received", ".woocommerce-thankyou", ".order"]:
+        for indicator in [
+            ".woocommerce-order-received",
+            ".order-received",
+            ".woocommerce-thankyou",
+            ".order",
+        ]:
             if self.page.is_visible(indicator):
                 visible_elements.append(indicator)
 
@@ -196,14 +215,18 @@ class CheckoutPage(BasePage):
         coupon_field = self.page.locator(coupon_field_selector)
 
         if not coupon_field.is_visible():
-            self.logger.info("Поле для промокода скрыто. Нажимаю на ссылку для его раскрытия.")
+            self.logger.info(
+                "Поле для промокода скрыто. Нажимаю на ссылку для его раскрытия."
+            )
             self.click(show_coupon_link, "Ссылка 'Нажмите для ввода купона'")
 
             try:
                 coupon_field.wait_for(state="visible", timeout=5000)
                 self.logger.info(" Поле для ввода промокода успешно раскрыто")
             except Exception as e:
-                self.logger.error(f"Не удалось дождаться появления поля для промокода: {e}")
+                self.logger.error(
+                    f"Не удалось дождаться появления поля для промокода: {e}"
+                )
         else:
             self.logger.info("Поле для промокода уже видно.")
 
@@ -220,19 +243,23 @@ class CheckoutPage(BasePage):
         if subtotal_element.is_visible():
             subtotal_text = subtotal_text = subtotal_element.text_content()
             import re
-            amount_match = re.search(r'[\d,]+', subtotal_text)
+
+            amount_match = re.search(r"[\d,]+", subtotal_text)
             if amount_match:
-                return float(amount_match.group().replace(',', ''))
+                return float(amount_match.group().replace(",", ""))
         return 0.0
 
     def get_discount_amount(self) -> float:
-        discount_element = self.page.locator(".cart-discount .amount, .coupon-discount .amount")
+        discount_element = self.page.locator(
+            ".cart-discount .amount, .coupon-discount .amount"
+        )
         if discount_element.is_visible():
             discount_text = discount_element.text_content()
             import re
-            amount_match = re.search(r'[\d,]+', discount_text)
+
+            amount_match = re.search(r"[\d,]+", discount_text)
             if amount_match:
-                return float(amount_match.group().replace(',', ''))
+                return float(amount_match.group().replace(",", ""))
         return 0.0
 
     def is_promocode_applied(self, promocode: str = "") -> bool:
@@ -241,11 +268,9 @@ class CheckoutPage(BasePage):
         success_indicators = [
             self.page.is_visible(".cart-discount"),
             self.page.is_visible(".coupon-applied"),
-
             self.page.is_visible(".woocommerce-message:has-text('успешно')"),
             self.page.is_visible(f".woocommerce-message:has-text('{promocode}')"),
-
-            self._has_discount_been_applied()
+            self._has_discount_been_applied(),
         ]
 
         if any(success_indicators):
@@ -274,7 +299,7 @@ class CheckoutPage(BasePage):
             ".woocommerce-order-overview__total .amount",
             ".order_details .total .amount",
             "td[data-title='Итого'] .amount",
-            "th:has-text('Итого') + td .amount"
+            "th:has-text('Итого') + td .amount",
         ]
 
         for selector in total_selectors:
@@ -300,7 +325,7 @@ class CheckoutPage(BasePage):
             self.page.is_visible(".woocommerce-error"),
             self.page.is_visible(".woocommerce-notice:has-text('недействителен')"),
             self.page.is_visible(".woocommerce-notice:has-text('не найден')"),
-            self.page.is_visible(f".woocommerce-error:has-text('{promocode}')")
+            self.page.is_visible(f".woocommerce-error:has-text('{promocode}')"),
         ]
 
         if any(error_indicators):
@@ -311,7 +336,7 @@ class CheckoutPage(BasePage):
         success_indicators = [
             self.page.is_visible(".cart-discount"),
             self.page.is_visible(".coupon-applied"),
-            self.page.is_visible(".woocommerce-message:has-text('успешно')")
+            self.page.is_visible(".woocommerce-message:has-text('успешно')"),
         ]
 
         if any(success_indicators):
@@ -325,6 +350,6 @@ class CheckoutPage(BasePage):
             self.page.is_visible(".woocommerce-error:has-text('сервер')"),
             self.page.is_visible(".woocommerce-error:has-text('ошибка 500')"),
             self.page.is_visible(".error:has-text('временно недоступен')"),
-            self.page.is_visible(".woocommerce-notice:has-text('попробуйте позже')")
+            self.page.is_visible(".woocommerce-notice:has-text('попробуйте позже')"),
         ]
         return any(error_indicators)

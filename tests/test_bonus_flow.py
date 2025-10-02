@@ -28,7 +28,10 @@ def test_bonus_program_registration(page, account_page, bonus_page):
 
         import random
         import string
-        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+
+        random_suffix = "".join(
+            random.choices(string.ascii_lowercase + string.digits, k=6)
+        )
         username = f"bonus_{random_suffix}"[:19]
         email = f"bonus{random_suffix}@test.com"[:19]
         password = "TestPass123!"[:19]
@@ -47,7 +50,9 @@ def test_bonus_program_registration(page, account_page, bonus_page):
 
     with allure.step("2. Перейти на страницу бонусной программы через хедер"):
         bonus_page.open_from_header()
-        assert "/bonus/" in page.url, "Не удалось перейти на страницу бонусной программы"
+        assert (
+            "/bonus/" in page.url
+        ), "Не удалось перейти на страницу бонусной программы"
 
     with allure.step("3. Заполнить форму бонусной программы"):
         assert page.is_visible(bonus_page.USERNAME_FIELD), "Поле имени не найдено"
@@ -68,6 +73,8 @@ def test_bonus_program_registration(page, account_page, bonus_page):
         logger.info("Бонусная карта успешно оформлена!")
 
     with allure.step("6. Дополнительная проверка: валидация полей"):
-        logger.info(" Основная проверка пройдена, валидация полей может быть добавлена отдельно")
+        logger.info(
+            " Основная проверка пройдена, валидация полей может быть добавлена отдельно"
+        )
 
     logger.info("Тест бонусной программы завершен успешно!")

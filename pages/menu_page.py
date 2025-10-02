@@ -1,4 +1,3 @@
-
 from pages.base_page import BasePage
 
 
@@ -37,8 +36,8 @@ class MenuPage(BasePage):
         to_price = self.page.locator("span.to")
         slider = self.page.locator(".ui-slider")
 
-        current_min = int(from_price.text_content().replace('₽', '').strip())
-        current_max = int(to_price.text_content().replace('₽', '').strip())
+        current_min = int(from_price.text_content().replace("₽", "").strip())
+        current_max = int(to_price.text_content().replace("₽", "").strip())
 
         self.logger.info(f"Текущий диапазон: {current_min}₽ - {current_max}₽")
         self.logger.info(f"Цель: {max_price}₽")
@@ -51,8 +50,8 @@ class MenuPage(BasePage):
 
         slider_box = slider.bounding_box()
 
-        target_x = slider_box['x'] + (slider_box['width'] * target_percentage / 100)
-        target_y = slider_box['y'] + slider_box['height'] / 2
+        target_x = slider_box["x"] + (slider_box["width"] * target_percentage / 100)
+        target_y = slider_box["y"] + slider_box["height"] / 2
 
         right_handle.hover()
         self.page.wait_for_timeout(500)
@@ -66,7 +65,7 @@ class MenuPage(BasePage):
         self.page.mouse.up()
         self.page.wait_for_timeout(1000)
 
-        new_max = int(to_price.text_content().replace('₽', '').strip())
+        new_max = int(to_price.text_content().replace("₽", "").strip())
         self.logger.info(f"Новая максимальная цена: {new_max}₽")
 
         if abs(new_max - max_price) > 5:
@@ -74,8 +73,8 @@ class MenuPage(BasePage):
             self._adjust_slider(right_handle, slider_box, correction)
 
     def _adjust_slider(self, handle, slider_box, correction_percentage):
-        target_x = slider_box['x'] + (slider_box['width'] * correction_percentage / 100)
-        target_y = slider_box['y'] + slider_box['height'] / 2
+        target_x = slider_box["x"] + (slider_box["width"] * correction_percentage / 100)
+        target_y = slider_box["y"] + slider_box["height"] / 2
 
         handle.hover()
         self.page.mouse.down()
@@ -88,8 +87,8 @@ class MenuPage(BasePage):
 
         self.page.mouse.down()
 
-        target_x = slider_box['x'] + (slider_box['width'] * target_percentage / 100)
-        target_y = slider_box['y'] + slider_box['height'] / 2
+        target_x = slider_box["x"] + (slider_box["width"] * target_percentage / 100)
+        target_y = slider_box["y"] + slider_box["height"] / 2
 
         self.page.mouse.move(target_x, target_y)
 
@@ -112,9 +111,10 @@ class MenuPage(BasePage):
         for i in range(price_elements.count()):
             price_text = price_elements.nth(i).text_content()
             import re
-            amount_match = re.search(r'[\d,]+', price_text)
+
+            amount_match = re.search(r"[\d,]+", price_text)
             if amount_match:
-                price = float(amount_match.group().replace(',', '.'))
+                price = float(amount_match.group().replace(",", "."))
                 prices.append(price)
 
         return prices
@@ -150,13 +150,16 @@ class MenuPage(BasePage):
         cart_link = self.page.locator("a.cart-contents")
         if cart_link.is_visible():
             cart_text = cart_link.text_content()
-            self.logger.info(f"Текст в корзине: '{cart_text}'")  # Добавим лог для отладки
+            self.logger.info(
+                f"Текст в корзине: '{cart_text}'"
+            )  # Добавим лог для отладки
 
             import re
-            amount_match = re.search(r'\[?\s*([\d,]+\.?[\d]*)\s*₽\s*\]?', cart_text)
+
+            amount_match = re.search(r"\[?\s*([\d,]+\.?[\d]*)\s*₽\s*\]?", cart_text)
 
             if amount_match:
-                amount_str = amount_match.group(1).replace(',', '').replace(' ', '')
+                amount_str = amount_match.group(1).replace(",", "").replace(" ", "")
                 try:
                     amount = float(amount_str)
                     self.logger.info(f"Распарсенная сумма: {amount}₽")

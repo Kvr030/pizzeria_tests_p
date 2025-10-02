@@ -40,9 +40,10 @@ class CartPage(BasePage):
     def get_cart_total_amount(self) -> float:
         total_text = self.page.locator(".order-total .amount").last.text_content()
         import re
-        amount_match = re.search(r'[\d,]+', total_text)
+
+        amount_match = re.search(r"[\d,]+", total_text)
         if amount_match:
-            return float(amount_match.group().replace(',', '.'))
+            return float(amount_match.group().replace(",", "."))
         return 0.0
 
     def is_cart_empty(self) -> bool:
@@ -54,7 +55,9 @@ class CartPage(BasePage):
         quantity_field.fill("")
         quantity_field.fill(str(new_quantity))
 
-        self.logger.info(f"Изменили количество товара #{product_index} на {new_quantity}")
+        self.logger.info(
+            f"Изменили количество товара #{product_index} на {new_quantity}"
+        )
 
     def click_update_cart(self):
         self.click(self.UPDATE_CART_BUTTON, "Кнопка 'Обновить корзину'")
@@ -69,15 +72,18 @@ class CartPage(BasePage):
         return int(value) if value else 1
 
     def get_product_subtotal(self, product_index: int = 0) -> float:
-        subtotal_element = self.page.locator(f"{self.PRODUCT_SUBTOTAL} .amount").nth(product_index)
+        subtotal_element = self.page.locator(f"{self.PRODUCT_SUBTOTAL} .amount").nth(
+            product_index
+        )
         subtotal_text = subtotal_element.text_content()
 
         self.logger.info(f"Текст суммы за товар #{product_index}: '{subtotal_text}'")
 
         import re
-        amount_match = re.search(r'[\d,]+', subtotal_text)
+
+        amount_match = re.search(r"[\d,]+", subtotal_text)
         if amount_match:
-            amount = float(amount_match.group().replace(',', '.'))
+            amount = float(amount_match.group().replace(",", "."))
             self.logger.info(f"Распарсенная сумма: {amount}₽")
             return amount
 
@@ -92,7 +98,7 @@ class CartPage(BasePage):
 
         self.page.wait_for_function(
             f"document.querySelectorAll('{self.CART_ITEM_ROW}').length < {initial_count}",
-            timeout=5000
+            timeout=5000,
         )
 
         self.page.wait_for_timeout(1000)
