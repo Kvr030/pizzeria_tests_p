@@ -51,3 +51,25 @@
 | **Page Object Pattern** | Архитектура проекта |
 
 ## 📁 Структура проекта
+pizzeria-automation/
+├── pages/ # Page Object модели
+│ ├── init.py
+│ ├── base_page.py # Базовая страница
+│ ├── main_page.py # Главная страница
+│ ├── cart_page.py # Страница корзины
+│ ├── auth_page.py # Страница авторизации
+│ └── bonus_page.py # Страница бонусов
+├── tests/ # Тестовые сценарии
+│ ├── init.py
+│ ├── conftest.py # Фикстуры Pytest
+│ ├── test_main_flow.py # Основной поток
+│ ├── test_promocodes.py# Тесты промокодов
+│ └── test_bonus.py # Тесты бонусов
+├── utils/ # Вспомогательные утилиты
+│ ├── init.py
+│ ├── logger.py # Настройка логирования
+│ └── helpers.py # Вспомогательные функции
+├── logs/ # Логи тестирования
+├── reports/ # Allure отчеты
+├── requirements.txt # Зависимости проекта
+└── README.md # Документация
